@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./Contact.css";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -16,49 +17,112 @@ export default function Contact() {
     });
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setStatus("Sending...");
 
     try {
-      // Breaking up the string prevents global build tool overrides
-      const subdomain = "backend-portfolio-z4kv";
-      const domain = "onrender.com";
-      const fullUrl = `https://${subdomain}.${domain}/api/contact/`;
-
-      const response = await fetch(fullUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify(formData)
-      });
+      const response = await fetch(
+        "https://backend-portfolio-z4kv.onrender.com/api/contact/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(formData)
+        }
+      );
 
       const data = await response.json();
 
+      console.log("SERVER RESPONSE:", data);
+
       if (response.ok && data.success) {
         setStatus("Message sent successfully ✅");
-        setFormData({ name: "", email: "", message: "" });
+
+        setFormData({
+          name: "",
+          email: "",
+          message: ""
+        });
+
       } else {
-        setStatus(data.error || "Failed to send ❌");
+        setStatus(
+          data.error || "Failed to send message ❌"
+        );
       }
 
-    } catch (err) {
-      console.log("FETCH ERROR DETAILS:", err);
-      setStatus("Failed to send message ❌");
+    } catch (error) {
+      console.log("CONTACT ERROR:", error);
+      setStatus("Server error ❌");
     }
   };
 
+
   return (
-    <form onSubmit={handleSubmit}>
-      <input name="name" onChange={handleChange} value={formData.name} placeholder="Name" />
-      <input name="email" onChange={handleChange} value={formData.email} placeholder="Email" />
-      <textarea name="message" onChange={handleChange} value={formData.message} placeholder="Message" />
+    <section id="contact" className="contact">
 
-      <button type="submit">Send Message</button>
+      <h2 className="contact-title">
+        Contact Me
+      </h2>
 
-      <p>{status}</p>
-    </form>
+
+      <form 
+        className="contact-form"
+        onSubmit={handleSubmit}
+      >
+
+        <input
+          className="contact-input"
+          type="text"
+          name="name"
+          placeholder="Your Name"
+          value={formData.name}
+          onChange={handleChange}
+          autoComplete="name"
+          required
+        />
+
+
+        <input
+          className="contact-input"
+          type="email"
+          name="email"
+          placeholder="Your Email"
+          value={formData.email}
+          onChange={handleChange}
+          autoComplete="email"
+          required
+        />
+
+
+        <textarea
+          className="contact-textarea"
+          name="message"
+          placeholder="Your Message"
+          value={formData.message}
+          onChange={handleChange}
+          required
+        />
+
+
+        <button 
+          className="contact-button"
+          type="submit"
+        >
+          Send Message
+        </button>
+
+
+        <p className="contact-status">
+          {status}
+        </p>
+
+      </form>
+
+    </section>
   );
 }
