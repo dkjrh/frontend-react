@@ -1,0 +1,73 @@
+.contact {
+  min-height: 100vh;
+  padding: 100px 20px;
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contact-title {
+  font-size: 2.5rem;
+  color: #38bdf8;
+  margin-bottom: 40px;
+}
+
+/* Form box */
+.contact-form {
+  width: 100%;
+  max-width: 500px;
+  background: #1e293b;
+  padding: 30px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Inputs */
+.contact-input,
+.contact-textarea {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+  background: #0f172a;
+  color: white;
+  border: 1px solid transparent;
+}
+
+.contact-input:focus,
+.contact-textarea:focus {
+  border-color: #38bdf8;
+}
+
+/* Textarea */
+.contact-textarea {
+  min-height: 120px;
+  resize: none;
+}
+
+/* Button */
+.contact-button {
+  padding: 12px;
+  background: #38bdf8;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.contact-button:hover {
+  background: #0ea5e9;
+}
+
+/* Status message */
+.contact-status {
+  text-align: center;
+  color: #22c55e;
+  font-size: 0.95rem;
+}
