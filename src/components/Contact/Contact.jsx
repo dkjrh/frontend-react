@@ -1,12 +1,10 @@
 import { useState } from "react";
-import axios from "axios";
-import "./Contact.css";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    message: "",
+    message: ""
   });
 
   const [status, setStatus] = useState("");
@@ -14,66 +12,53 @@ export default function Contact() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setStatus("Sending...");
 
     try {
-      const res = await axios.post(
-        "https://backend-portfolio-z4kv.onrender.com/api/contact/",
-        formData
-      );
+      // Breaking up the string prevents global build tool overrides
+      const subdomain = "backend-portfolio-z4kv";
+      const domain = "onrender.com";
+      const fullUrl = `https://${subdomain}.${domain}/api/contact/`;
 
-      if (res.data.success) {
+      const response = await fetch(fullUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         setStatus("Message sent successfully ✅");
         setFormData({ name: "", email: "", message: "" });
       } else {
-        setStatus("Failed to send ❌");
+        setStatus(data.error || "Failed to send ❌");
       }
+
     } catch (err) {
-      setStatus("Server error ❌");
-      console.log(err.response?.data || err.message);
+      console.log("FETCH ERROR DETAILS:", err);
+      setStatus("Failed to send message ❌");
     }
   };
 
   return (
-    <div className="contact">
-      <h2 className="contact-title">Contact Me</h2>
+    <form onSubmit={handleSubmit}>
+      <input name="name" onChange={handleChange} value={formData.name} placeholder="Name" />
+      <input name="email" onChange={handleChange} value={formData.email} placeholder="Email" />
+      <textarea name="message" onChange={handleChange} value={formData.message} placeholder="Message" />
 
-      <form className="contact-form" onSubmit={handleSubmit}>
-        <input
-          className="contact-input"
-          name="name"
-          placeholder="Name"
-          value={formData.name}
-          onChange={handleChange}
-        />
+      <button type="submit">Send Message</button>
 
-        <input
-          className="contact-input"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-
-        <textarea
-          className="contact-textarea"
-          name="message"
-          placeholder="Message"
-          value={formData.message}
-          onChange={handleChange}
-        />
-
-        <button className="contact-button" type="submit">
-          Send Message
-        </button>
-
-        <p className="contact-status">{status}</p>
-      </form>
-    </div>
+      <p>{status}</p>
+    </form>
   );
 }
