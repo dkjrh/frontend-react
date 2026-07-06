@@ -36,10 +36,7 @@ export default function Contact() {
     setStatus("");
 
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/contact/",
-        formData
-      );
+      const res = await axios.post("https://backend-portfolio-z4kv.onrender.com/api/contact/", formData);
 
       setStatus("✅ Message sent successfully!");
       setFormData({ name: "", email: "", message: "" });
