@@ -6,69 +6,56 @@ export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    message: ""
+    message: "",
   });
 
   const [status, setStatus] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
-
-  const isValid =
-    formData.name.trim() &&
-    formData.email.trim() &&
-    formData.message.trim();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!isValid) {
-      setStatus("Please fill in all fields");
-      return;
-    }
-
-    setLoading(true);
-    setStatus("");
-
     try {
-      const res = await axios.post("https://backend-portfolio-z4kv.onrender.com/api/contact/", formData);
+      const res = await axios.post(
+        "https://backend-portfolio-z4kv.onrender.com/api/contact/",
+        formData
+      );
 
-      setStatus("✅ Message sent successfully!");
-      setFormData({ name: "", email: "", message: "" });
-
+      if (res.data.success) {
+        setStatus("Message sent successfully ✅");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        setStatus("Failed to send ❌");
+      }
     } catch (err) {
-      console.error(err);
-      setStatus("❌ Failed to send message. Try again.");
-    } finally {
-      setLoading(false);
+      setStatus("Server error ❌");
+      console.log(err.response?.data || err.message);
     }
   };
 
   return (
-    <section id="contact" className="contact">
+    <div className="contact">
       <h2 className="contact-title">Contact Me</h2>
 
       <form className="contact-form" onSubmit={handleSubmit}>
-        
         <input
           className="contact-input"
-          type="text"
           name="name"
-          placeholder="Your Name"
+          placeholder="Name"
           value={formData.name}
           onChange={handleChange}
         />
 
         <input
           className="contact-input"
-          type="email"
           name="email"
-          placeholder="Your Email"
+          placeholder="Email"
           value={formData.email}
           onChange={handleChange}
         />
@@ -76,31 +63,17 @@ export default function Contact() {
         <textarea
           className="contact-textarea"
           name="message"
-          placeholder="Your Message"
+          placeholder="Message"
           value={formData.message}
           onChange={handleChange}
         />
 
-        <button
-          className="contact-button"
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? "Sending..." : "Send Message"}
+        <button className="contact-button" type="submit">
+          Send Message
         </button>
 
+        <p className="contact-status">{status}</p>
       </form>
-
-      {status && (
-        <p
-          className="contact-status"
-          style={{
-            color: status.includes("✅") ? "#22c55e" : "#ef4444"
-          }}
-        >
-          {status}
-        </p>
-      )}
-    </section>
+    </div>
   );
 }
